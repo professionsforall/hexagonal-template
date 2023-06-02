@@ -1,0 +1,7 @@
+wipe = true
+[psql]
+dbname = "hexa"
+host = "localhost"
+user = "user"
+pass = "user"
+sslmode = "disable"
