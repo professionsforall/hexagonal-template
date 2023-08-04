@@ -9,7 +9,7 @@ import (
 func main() {
 	log.Apply()
 	if err := config.Apply(); err != nil {
-		log.Logger.Panicf("error while readeing apllying config: %v", err)
+		panic(err)
 	}
 	cmd.Execute()
 }

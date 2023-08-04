@@ -1,8 +1,7 @@
 package http
 
 import (
-	"log"
-
+	"github.com/professionsforall/hexagonal-template/pkg/log"
 	"github.com/gofiber/fiber/v2"
 	"github.com/professionsforall/hexagonal-template/internal/adapters/repository"
 	"github.com/professionsforall/hexagonal-template/internal/core/usecase"
@@ -14,7 +13,7 @@ var BootTaskController TaskController
 func Init() {
 	conn, err := databaseConnection()
 	if err != nil {
-		panic(err)
+		log.Logger.Panic(err)
 	}
 
 	taskRepository := repository.NewTaskRepository(conn)
@@ -27,5 +26,5 @@ func Init() {
 	middlewareApply(app)
 	registerRoutes(app, taskController)
 
-	go log.Fatal(app.Listen(":" + config.AppConfig.App.AppPort))
+	go log.Logger.Fatal(app.Listen(":" + config.AppConfig.App.AppPort).Error())
 }
