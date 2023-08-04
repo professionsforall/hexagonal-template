@@ -1,11 +1,11 @@
 package http
 
 import (
-	"github.com/professionsforall/hexagonal-template/pkg/log"
 	"github.com/gofiber/fiber/v2"
 	"github.com/professionsforall/hexagonal-template/internal/adapters/repository"
 	"github.com/professionsforall/hexagonal-template/internal/core/usecase"
 	"github.com/professionsforall/hexagonal-template/pkg/config"
+	"github.com/professionsforall/hexagonal-template/pkg/log"
 )
 
 var BootTaskController TaskController

@@ -10,8 +10,8 @@ import (
 var AppConfig Config
 
 type Config struct {
-	Database Database
-	App      App
+	Databases Databases
+	App       App
 }
 
 type App struct {
@@ -20,8 +20,9 @@ type App struct {
 	AppDebug bool
 }
 
-type Database struct {
+type Databases struct {
 	Postgres Postgres
+	Mysql    Mysql
 }
 
 type Postgres struct {
@@ -29,6 +30,15 @@ type Postgres struct {
 	UserName string
 	Password string
 	Database string
+	Port     string
+	Sslmode  string
+}
+
+type Mysql struct {
+	Host     string
+	UserName string
+	Database string
+	Password string
 	Port     string
 	Sslmode  string
 }
@@ -48,20 +58,19 @@ func Apply() error {
 		AppDebug: appDebug,
 	}
 
-	postgres := Postgres{
-		Host:     os.Getenv("POSTGRES_HOST"),
-		UserName: os.Getenv("POSTGRES_USER"),
-		Password: os.Getenv("POSTGRES_PASSWORD"),
-		Database: os.Getenv("POSTGRES_DATABASE"),
-		Port:     os.Getenv("POSTGRES_PORT"),
-		Sslmode:  os.Getenv("POSTGRES_SSL_MODE"),
+	mysql := Mysql{
+		UserName: os.Getenv("DATABASES_MYSQL_USER"),
+		Password: os.Getenv("DATABASES_MYSQL_PASSWORD"),
+		Database: os.Getenv("DATABASES_MYSQL_DATABASE"),
+		Port:     os.Getenv("DATABASES_MYSQL_PORT"),
+		Sslmode:  os.Getenv("DATABASE_MYSQL_SSLMODE"),
 	}
-	database := Database{
-		Postgres: postgres,
+	database := Databases{
+		Mysql: mysql,
 	}
 
 	AppConfig.App = app
-	AppConfig.Database = database
+	AppConfig.Databases = database
 
 	return nil
 }

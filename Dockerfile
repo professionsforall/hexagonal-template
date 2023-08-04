@@ -6,7 +6,7 @@ ARG EXECUTABLE
 
 WORKDIR /app
 
-RUN apt update && apt upgrade
+RUN apt update && apt -y upgrade
 
 RUN apt install -y make
 

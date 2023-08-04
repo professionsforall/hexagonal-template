@@ -8,7 +8,7 @@ import (
 )
 
 var databaseConnection = func() (*sql.DB, error) {
-	connectionConfig := config.AppConfig.Database.Postgres
+	connectionConfig := config.AppConfig.Databases.Postgres
 	return utils.PostgresConnection(
 		connectionConfig.Host,
 		connectionConfig.UserName,
