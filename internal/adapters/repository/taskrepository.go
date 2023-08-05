@@ -29,7 +29,7 @@ func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) (*mode
 		DoneAt:      null.NewTime(task.DoneAt, true),
 	}
 	err := data.Insert(ctx, t.db, boil.Infer())
-	task.ID = data.ID
+	task.ID = int(data.ID)
 	task.Color = data.Color.String
 	task.DoneAt = data.DoneAt.Time
 	task.CreatedAt = data.CreatedAt.Time
@@ -38,7 +38,7 @@ func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) (*mode
 	return &task, err
 }
 func (t *TaskRepository) Get(ctx context.Context, id int) (*models.TaskModel, error) {
-	task, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).One(ctx, t.db)
+	task, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).One(ctx, t.db)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -46,7 +46,7 @@ func (t *TaskRepository) Get(ctx context.Context, id int) (*models.TaskModel, er
 		return nil, err
 	}
 	return &models.TaskModel{
-		ID:          task.ID,
+		ID:          int(task.ID),
 		Title:       task.Title.String,
 		Description: task.Description.String,
 		Color:       task.Color.String,
@@ -61,7 +61,7 @@ func (t *TaskRepository) All(ctx context.Context) (tasks []*models.TaskModel, er
 	allTasks, err := boilerModel.Tasks().All(ctx, t.db)
 	for _, task := range allTasks {
 		taskModel := new(models.TaskModel)
-		taskModel.ID = task.ID
+		taskModel.ID = int(task.ID)
 		taskModel.Title = task.Title.String
 		taskModel.Description = task.Description.String
 		taskModel.Color = task.Color.String
@@ -76,13 +76,13 @@ func (t *TaskRepository) All(ctx context.Context) (tasks []*models.TaskModel, er
 }
 
 func (t *TaskRepository) Update(ctx context.Context, id int, columns map[string]interface{}) (*models.TaskModel, error) {
-	_, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).UpdateAll(ctx, t.db, columns)
-	taskModel, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).One(ctx, t.db)
+	_, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).UpdateAll(ctx, t.db, columns)
+	taskModel, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).One(ctx, t.db)
 	if err != nil {
 		return nil, err
 	}
 	return &models.TaskModel{
-		ID:          taskModel.ID,
+		ID:          int(taskModel.ID),
 		Title:       taskModel.Title.String,
 		Description: taskModel.Description.String,
 		Color:       taskModel.Color.String,
@@ -95,7 +95,7 @@ func (t *TaskRepository) Update(ctx context.Context, id int, columns map[string]
 }
 
 func (t *TaskRepository) Delete(ctx context.Context, id int) (bool, error) {
-	rows, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).DeleteAll(ctx, t.db)
+	rows, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).DeleteAll(ctx, t.db)
 
 	if rows == 0 {
 		return false, err
