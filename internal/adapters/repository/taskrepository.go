@@ -20,7 +20,7 @@ func NewTaskRepository(db *sql.DB) dependency.TaskRepositoryDependency {
 	return &TaskRepository{db: db}
 }
 
-func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) (*models.TaskModel, error) {
+func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) error {
 	data := boilerModel.Task{
 		Title:       null.NewString(task.Title, true),
 		Description: null.NewString(task.Description, true),
@@ -29,13 +29,10 @@ func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) (*mode
 		DoneAt:      null.NewTime(task.DoneAt, true),
 	}
 	err := data.Insert(ctx, t.db, boil.Infer())
-	task.ID = int(data.ID)
-	task.Color = data.Color.String
-	task.DoneAt = data.DoneAt.Time
-	task.CreatedAt = data.CreatedAt.Time
-	task.UpdatedAt = data.UpdatedAt.Time
-	task.DeletedAt = data.DeletedAt.Time
-	return &task, err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func (t *TaskRepository) Get(ctx context.Context, id int) (*models.TaskModel, error) {
 	task, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).One(ctx, t.db)
@@ -75,30 +72,19 @@ func (t *TaskRepository) All(ctx context.Context) (tasks []*models.TaskModel, er
 	return tasks, err
 }
 
-func (t *TaskRepository) Update(ctx context.Context, id int, columns map[string]interface{}) (*models.TaskModel, error) {
+func (t *TaskRepository) Update(ctx context.Context, id int, columns map[string]interface{}) error {
 	_, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).UpdateAll(ctx, t.db, columns)
-	taskModel, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).One(ctx, t.db)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &models.TaskModel{
-		ID:          int(taskModel.ID),
-		Title:       taskModel.Title.String,
-		Description: taskModel.Description.String,
-		Color:       taskModel.Color.String,
-		StartsAt:    taskModel.StartsAt.Time,
-		DoneAt:      taskModel.DoneAt.Time,
-		CreatedAt:   taskModel.CreatedAt.Time,
-		UpdatedAt:   taskModel.UpdatedAt.Time,
-		DeletedAt:   taskModel.DeletedAt.Time,
-	}, nil
+	return nil
 }
 
-func (t *TaskRepository) Delete(ctx context.Context, id int) (bool, error) {
+func (t *TaskRepository) Delete(ctx context.Context, id int) error {
 	rows, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).DeleteAll(ctx, t.db)
 
 	if rows == 0 {
-		return false, err
+		return err
 	}
-	return true, err
+	return nil
 }
