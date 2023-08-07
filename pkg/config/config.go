@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -10,8 +11,9 @@ import (
 var AppConfig Config
 
 type Config struct {
-	Database Database
-	App      App
+	Databases    Databases
+	App          App
+	ShutdownTime time.Duration
 }
 
 type App struct {
@@ -20,8 +22,9 @@ type App struct {
 	AppDebug bool
 }
 
-type Database struct {
+type Databases struct {
 	Postgres Postgres
+	Mysql    Mysql
 }
 
 type Postgres struct {
@@ -33,8 +36,23 @@ type Postgres struct {
 	Sslmode  string
 }
 
+type Mysql struct {
+	Host     string
+	UserName string
+	Database string
+	Password string
+	Port     string
+	Sslmode  string
+	Timeout  time.Duration
+}
+
 func Apply() error {
 	if err := godotenv.Load(); err != nil {
+		return err
+	}
+	shutdownTime := os.Getenv("SHUTDOWN_TIME")
+	shutdownTimeDuration, err := time.ParseDuration(shutdownTime)
+	if err != nil {
 		return err
 	}
 	appDebug, err := strconv.ParseBool(os.Getenv("APP_DEBUG"))
@@ -47,21 +65,26 @@ func Apply() error {
 		AppPort:  os.Getenv("APP_PORT"),
 		AppDebug: appDebug,
 	}
-
-	postgres := Postgres{
-		Host:     os.Getenv("POSTGRES_HOST"),
-		UserName: os.Getenv("POSTGRES_USER"),
-		Password: os.Getenv("POSTGRES_PASSWORD"),
-		Database: os.Getenv("POSTGRES_DATABASE"),
-		Port:     os.Getenv("POSTGRES_PORT"),
-		Sslmode:  os.Getenv("POSTGRES_SSL_MODE"),
+	mysqlTimeout := os.Getenv("DATABASES_MYSQL_TIMEOUT")
+	mysqlTimeoutDuration, err := time.ParseDuration(mysqlTimeout)
+	if err != nil {
+		return err
 	}
-	database := Database{
-		Postgres: postgres,
+	mysql := Mysql{
+		UserName: os.Getenv("DATABASES_MYSQL_USER"),
+		Password: os.Getenv("DATABASES_MYSQL_PASSWORD"),
+		Database: os.Getenv("DATABASES_MYSQL_DATABASE"),
+		Port:     os.Getenv("DATABASES_MYSQL_PORT"),
+		Sslmode:  os.Getenv("DATABASE_MYSQL_SSLMODE"),
+		Timeout:  mysqlTimeoutDuration,
+	}
+	database := Databases{
+		Mysql: mysql,
 	}
 
 	AppConfig.App = app
-	AppConfig.Database = database
+	AppConfig.Databases = database
+	AppConfig.ShutdownTime = shutdownTimeDuration
 
 	return nil
 }

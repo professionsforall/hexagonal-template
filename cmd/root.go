@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootCammand = &cobra.Command{
+var rootCommand = &cobra.Command{
 	Use:     "hexa",
 	Short:   "hexagonal arichtecture",
 	Version: "1.0.0",
@@ -14,7 +14,7 @@ var rootCammand = &cobra.Command{
 
 // Execute the root command using cobra CLI generator
 func Execute() {
-	if err := rootCammand.Execute(); err != nil {
+	if err := rootCommand.Execute(); err != nil {
 		log.Fatal(err)
 	}
 }

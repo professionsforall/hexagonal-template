@@ -9,10 +9,10 @@ var serveCommand = &cobra.Command{
 	Use:   "serve",
 	Short: "serves application at given port",
 	Run: func(cmd *cobra.Command, args []string) {
-		http.Init()
+		http.Init(cmd.Context())
 	},
 }
 
 func init() {
-	rootCammand.AddCommand(serveCommand)
+	rootCommand.AddCommand(serveCommand)
 }

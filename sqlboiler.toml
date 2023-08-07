@@ -1,7 +1,8 @@
-wipe = true
-[psql]
-dbname = "hexa"
-host = "localhost"
-user = "user"
-pass = "user"
-sslmode = "disable"
+add-enum-types = true
+[mysql]
+  dbname  = "template"
+  host    = "localhost"
+  port    = 3306
+  user    = "root"
+  pass    = "password"
+  sslmode = "false"

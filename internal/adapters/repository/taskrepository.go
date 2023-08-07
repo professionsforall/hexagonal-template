@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	boilerModel "github.com/professionsforall/hexagonal-template/internal/adapters/models"
+	boilerModel "github.com/professionsforall/hexagonal-template/internal/adapters/models/sqlboiler/mysql"
 	"github.com/professionsforall/hexagonal-template/internal/core/models"
 	"github.com/professionsforall/hexagonal-template/internal/core/ports/dependency"
 	"github.com/volatiletech/null/v8"
@@ -20,7 +20,7 @@ func NewTaskRepository(db *sql.DB) dependency.TaskRepositoryDependency {
 	return &TaskRepository{db: db}
 }
 
-func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) (*models.TaskModel, error) {
+func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) error {
 	data := boilerModel.Task{
 		Title:       null.NewString(task.Title, true),
 		Description: null.NewString(task.Description, true),
@@ -29,16 +29,13 @@ func (t *TaskRepository) Save(ctx context.Context, task models.TaskModel) (*mode
 		DoneAt:      null.NewTime(task.DoneAt, true),
 	}
 	err := data.Insert(ctx, t.db, boil.Infer())
-	task.ID = data.ID
-	task.Color = data.Color.String
-	task.DoneAt = data.DoneAt.Time
-	task.CreatedAt = data.CreatedAt.Time
-	task.UpdatedAt = data.UpdatedAt.Time
-	task.DeletedAt = data.DeletedAt.Time
-	return &task, err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func (t *TaskRepository) Get(ctx context.Context, id int) (*models.TaskModel, error) {
-	task, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).One(ctx, t.db)
+	task, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).One(ctx, t.db)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -46,7 +43,7 @@ func (t *TaskRepository) Get(ctx context.Context, id int) (*models.TaskModel, er
 		return nil, err
 	}
 	return &models.TaskModel{
-		ID:          task.ID,
+		ID:          int(task.ID),
 		Title:       task.Title.String,
 		Description: task.Description.String,
 		Color:       task.Color.String,
@@ -61,7 +58,7 @@ func (t *TaskRepository) All(ctx context.Context) (tasks []*models.TaskModel, er
 	allTasks, err := boilerModel.Tasks().All(ctx, t.db)
 	for _, task := range allTasks {
 		taskModel := new(models.TaskModel)
-		taskModel.ID = task.ID
+		taskModel.ID = int(task.ID)
 		taskModel.Title = task.Title.String
 		taskModel.Description = task.Description.String
 		taskModel.Color = task.Color.String
@@ -75,30 +72,19 @@ func (t *TaskRepository) All(ctx context.Context) (tasks []*models.TaskModel, er
 	return tasks, err
 }
 
-func (t *TaskRepository) Update(ctx context.Context, id int, columns map[string]interface{}) (*models.TaskModel, error) {
-	_, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).UpdateAll(ctx, t.db, columns)
-	taskModel, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).One(ctx, t.db)
+func (t *TaskRepository) Update(ctx context.Context, id int, columns map[string]interface{}) error {
+	_, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).UpdateAll(ctx, t.db, columns)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &models.TaskModel{
-		ID:          taskModel.ID,
-		Title:       taskModel.Title.String,
-		Description: taskModel.Description.String,
-		Color:       taskModel.Color.String,
-		StartsAt:    taskModel.StartsAt.Time,
-		DoneAt:      taskModel.DoneAt.Time,
-		CreatedAt:   taskModel.CreatedAt.Time,
-		UpdatedAt:   taskModel.UpdatedAt.Time,
-		DeletedAt:   taskModel.DeletedAt.Time,
-	}, nil
+	return nil
 }
 
-func (t *TaskRepository) Delete(ctx context.Context, id int) (bool, error) {
-	rows, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(id)).DeleteAll(ctx, t.db)
+func (t *TaskRepository) Delete(ctx context.Context, id int) error {
+	rows, err := boilerModel.Tasks(boilerModel.TaskWhere.ID.EQ(uint64(id))).DeleteAll(ctx, t.db)
 
 	if rows == 0 {
-		return false, err
+		return err
 	}
-	return true, err
+	return nil
 }
