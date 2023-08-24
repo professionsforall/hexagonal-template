@@ -10,4 +10,7 @@ var registerRoutes = func(router *fiber.App, controller TaskController) {
 	v1.Get("/task/:id", controller.GetById)
 	v1.Put("/task/:id", controller.Update)
 	v1.Delete("/task/:id", controller.Delete)
+	router.Get("routes", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(router.GetRoutes())
+	})
 }

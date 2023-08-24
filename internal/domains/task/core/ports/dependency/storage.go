@@ -3,7 +3,7 @@ package dependency
 import (
 	"context"
 
-	"github.com/professionsforall/hexagonal-template/internal/core/models"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/models"
 )
 
 type TaskRepositoryDependency interface {

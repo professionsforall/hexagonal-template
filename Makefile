@@ -16,8 +16,8 @@ GRPC=protoc
 DOCKER=docker
 GIT=/usr/bin/git
 export GOSUMDB=off
-export GOPRIVATE="git.pio.ir/*"
-
+#export GOOS=linux
+#export GOARCH=amd64
 RELEASE?=$(shell cat VERSION || echo "none")
 COMMIT?=$(shell git rev-parse --short HEAD)
 ts := $(shell /bin/date "+%Y%m%d%H%M%S")
@@ -105,3 +105,6 @@ docker-push:
 	@$(DOCKER) push -f dockerfile.$(BUILD_TYPE) $(DOCKER_NAME):latest .
 docker-purge:
 	@$(DOCKER) image -f dockerfile.$(BUILD_TYPE) rm $(DOCKER_NAME) .
+tag:
+	@GIT tag $(RELEASE)
+	@GIT push --tags

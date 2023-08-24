@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 
-	boilerModel "github.com/professionsforall/hexagonal-template/internal/adapters/models/sqlboiler/mysql"
-	"github.com/professionsforall/hexagonal-template/internal/core/models"
-	"github.com/professionsforall/hexagonal-template/internal/core/ports/dependency"
+	boilerModel "github.com/professionsforall/hexagonal-template/internal/domains/task/adapters/models/sqlboiler/mysql"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/models"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/ports/dependency"
+
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )

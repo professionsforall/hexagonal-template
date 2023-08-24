@@ -2,8 +2,8 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/professionsforall/hexagonal-template/internal/core/models"
-	"github.com/professionsforall/hexagonal-template/internal/core/ports/outer"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/models"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/ports/outer"
 )
 
 type TaskController interface {

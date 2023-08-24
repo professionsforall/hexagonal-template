@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/professionsforall/hexagonal-template/internal/core/models"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/models"
 )
 
 type ErrorResponse struct {

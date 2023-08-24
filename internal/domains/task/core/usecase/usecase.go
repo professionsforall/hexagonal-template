@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/professionsforall/hexagonal-template/internal/core/models"
-	"github.com/professionsforall/hexagonal-template/internal/core/ports/dependency"
-	"github.com/professionsforall/hexagonal-template/internal/core/ports/outer"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/models"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/ports/dependency"
+	"github.com/professionsforall/hexagonal-template/internal/domains/task/core/ports/outer"
 )
 
 type TaskHandler struct {
